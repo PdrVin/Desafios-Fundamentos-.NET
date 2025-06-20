@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace DesafioFundamentos.Models
 {
     public class Estacionamento
@@ -10,59 +14,65 @@ namespace DesafioFundamentos.Models
         {
             this.precoInicial = precoInicial;
             this.precoPorHora = precoPorHora;
-            this.veiculos = new List<string>();
+            veiculos = new List<string>();
         }
 
         public void AdicionarVeiculo()
         {
-            Console.WriteLine("Digite a placa do veículo para estacionar: ");
-            string placa = Console.ReadLine();
+            Console.Write("Digite a placa do veículo para estacionar: ");
+            string placa = Console.ReadLine()?.ToUpper().Trim();
+
+            if (string.IsNullOrWhiteSpace(placa))
+            {
+                Console.WriteLine("Placa inválida. Tente novamente.");
+                return;
+            }
+
+            if (veiculos.Contains(placa))
+            {
+                Console.WriteLine("Esse veículo já está estacionado.");
+                return;
+            }
 
             veiculos.Add(placa);
+            Console.WriteLine($"Veículo {placa} estacionado com sucesso!");
         }
 
         public void RemoverVeiculo()
         {
-            Console.WriteLine("Digite a placa do veículo para remover:");
+            Console.Write("Digite a placa do veículo para remover: ");
+            string placa = Console.ReadLine()?.ToUpper().Trim();
 
-            // Pedir para o usuário digitar a placa e armazenar na variável placa
-            // *IMPLEMENTE AQUI*
-            string placa = "";
-
-            // Verifica se o veículo existe
-            if (veiculos.Any(x => x.ToUpper() == placa.ToUpper()))
+            if (veiculos.Any(x => x == placa))
             {
-                Console.WriteLine("Digite a quantidade de horas que o veículo permaneceu estacionado:");
+                Console.Write("Digite a quantidade de horas que o veículo permaneceu estacionado: ");
+                if (!int.TryParse(Console.ReadLine(), out int horas) || horas < 0)
+                {
+                    Console.WriteLine("Entrada inválida para horas. Remoção cancelada.");
+                    return;
+                }
 
-                // TODO: Pedir para o usuário digitar a quantidade de horas que o veículo permaneceu estacionado,
-                // TODO: Realizar o seguinte cálculo: "precoInicial + precoPorHora * horas" para a variável valorTotal                
-                // *IMPLEMENTE AQUI*
-                int horas = 0;
-                decimal valorTotal = 0; 
+                decimal valorTotal = precoInicial + precoPorHora * horas;
+                veiculos.Remove(placa);
 
-                // TODO: Remover a placa digitada da lista de veículos
-                // *IMPLEMENTE AQUI*
-
-                Console.WriteLine($"O veículo {placa} foi removido e o preço total foi de: R$ {valorTotal}");
+                Console.WriteLine($"O veículo {placa} foi removido e o preço total foi de: R$ {valorTotal:F2}");
             }
             else
             {
-                Console.WriteLine("Desculpe, esse veículo não está estacionado aqui. Confira se digitou a placa corretamente");
+                Console.WriteLine("Veículo não encontrado. Verifique se a placa foi digitada corretamente.");
             }
         }
 
         public void ListarVeiculos()
         {
-            // Verifica se há veículos no estacionamento
             if (veiculos.Any())
             {
-                Console.WriteLine("Os veículos estacionados são:");
-                // TODO: Realizar um laço de repetição, exibindo os veículos estacionados
-                // *IMPLEMENTE AQUI*
+                Console.WriteLine("Veículos atualmente estacionados:");
+                veiculos.ForEach(placa => Console.WriteLine($"- {placa}"));
             }
             else
             {
-                Console.WriteLine("Não há veículos estacionados.");
+                Console.WriteLine("Não há veículos estacionados no momento.");
             }
         }
     }
